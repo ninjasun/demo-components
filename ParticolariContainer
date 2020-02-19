@@ -1,0 +1,76 @@
+import React from 'react';
+import withContainer from "./withContainer";
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import { Loading, Paginator, SearchBar, ParticolareCard } from '../components'
+import Grid from '@material-ui/core/Grid';
+
+const defaultSearchType = 'PARTICOLARE';
+const URL_API = `/api/particolari/`;
+const URL_ADD_BUTTON = `/particolari/nuovo`;
+
+/***** FILTRI RICERCA *******/
+const filters = [
+  {
+    value: 'PARTICOLARE',
+    label: 'Particolare',
+  },
+  {
+    value: 'CLIENTE',
+    label: 'Cliente',
+  },
+];
+/****************************/
+
+
+
+const ParticolariContainer = ({data,  isLoading, error, index, searchType, searchValue, handleChange, handlePaginator,  history }) => {
+
+  function addNewItem(e){
+    history.push(URL_ADD_BUTTON)
+  }
+
+  return (
+    <Grid container>
+        <Grid item xs={12} md={12} align-items='flex-end'>
+            <SearchBar
+                handleChange={handleChange}
+                value={searchValue}
+                filters={filters}
+                searchType={searchType}
+            />
+        </Grid>
+        <Grid container>
+            {isLoading ? <Loading /> : data.map(item => <ParticolareCard data={item} key={item.id} url={`${'/particolare/'}${item.codice}/${item.id}/dettagli`} />)} 
+        </Grid>
+        <Paginator currentIndex={index} handleClick={handlePaginator} />
+        <Grid item style={{position: 'fixed', bottom: 50, right: 50}}>
+            <Fab color="primary" aria-label="Add" onClick={addNewItem}>
+                <AddIcon />
+            </Fab>
+        </Grid>
+    </Grid>
+    )
+}
+
+
+ParticolariContainer.propTypes = {
+  data: PropTypes.array,
+  isLoading: PropTypes.bool,
+  index: PropTypes.number,
+  searchType:  PropTypes.string,
+  searchValue: PropTypes.string,
+  handleChange: PropTypes.func, 
+  handlePaginator: PropTypes.func, 
+}
+
+ParticolariContainer.defaultProps = {
+  searchType: "PARTICOLARE",
+  index: 1,
+  searchValue: '',
+}
+
+export default withRouter(withContainer(URL_API, defaultSearchType)(ParticolariContainer));
+
