@@ -1,0 +1,101 @@
+import React from 'react';
+import axios from 'axios';
+import { BASE_URL } from '../constants';
+import PropTypes from 'prop-types';
+
+/**
+ * 
+ * HOC TO MANAGE FETCH, PAGINATION AND SEARCH
+ * 
+ * @param {*} fetchUrl  API RUL
+ * @param {*} searchType  DEFAULT SEARCH TYPE
+ */
+
+const withContainer = (fetchUrl, searchType ) => (Component) =>
+    class extends React.Component {
+        constructor() {
+            super();
+            this.state = {
+                data: [],
+                isLoading: false,
+                error: null,
+                index: 1,
+                searchValue: '',
+                searchType: searchType
+            }
+            this.fetchData = this.fetchData.bind(this);
+            this.handleChange = this.handleChange.bind(this);
+            this.handlePaginator = this.handlePaginator.bind(this);
+        }   
+
+        componentDidMount() {
+            this.fetchData();
+        }
+
+        componentDidUpdate(prevProps, prevState) {
+            if (prevState.searchValue !== this.state.searchValue || prevState.index !== this.state.index || prevState.searchType !== this.state.searchType) {
+                this.fetchData();
+            }
+        }
+
+        fetchData() {
+            const { index, searchType, searchValue } = this.state;
+
+            const params = {
+                pageNumber: index,
+                searchType,
+                searchValue,
+            };
+            const request = axios({
+                method: 'get',
+                params: params,
+                url: `${BASE_URL}${fetchUrl}`,
+            });
+            request.then(res => {
+                this.setState({
+                    data: res.data,
+                    isLoading: false,
+                })
+            },
+                err => {
+                    this.setState({
+                        isLoading: false,
+                        error: err
+                })
+            })
+            .catch(APIerr => {
+                console.log("APIerr: ", APIerr)
+            })
+        }
+
+        /**
+         * setta attributo di ricerca 
+         */
+        handleChange(event, type){
+            event.preventDefault();
+            this.setState({
+                [type]: event.target.value
+            })
+        }
+
+        handlePaginator(e, value){
+            e.preventDefault();
+            this.setState({
+                index: value
+            })
+        }
+
+        render() {
+           return <Component {...this.state} {...this.props} handlePaginator={this.handlePaginator} handleChange={this.handleChange}  />
+        }
+    }
+
+
+withContainer.propTypes = {
+  fetchUrl: PropTypes.string.isRequired,
+  searchType: PropTypes.string.isRequired,
+}
+
+
+export default withContainer;
+
