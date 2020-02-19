@@ -1,0 +1,124 @@
+import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+
+const styles = theme => ({
+
+  searchContainer: {
+	position: 'relative',
+	float:'right',
+	display: 'flex',
+	border: '1px solid',
+	borderRadius: 4,
+	flexDirection:'row',
+	justifyContent: 'center',
+	padding:4,
+	height: 45,
+	borderColor:theme.palette.secondary.main,
+	//borderRadius: theme.shape.borderRadius,
+	'&:hover': {
+	      backgroundColor:'transparent',
+	    },
+	'&:focus': {
+	      backgroundColor: '#c3c3c3',
+	    },
+	marginBottom:14,
+	marginLeft: 0,
+	width: '100%',
+	[theme.breakpoints.up('sm')]: {
+	    width: 'auto',
+	    maxWidth: 400,
+	    minWidth:320
+	   },
+  },
+  searchIcon: {
+  	display:'flex',
+  	alignSelf:'center',
+  },
+  textField:{
+  	float:'right',
+  	color: theme.palette.secondary.contrastText,
+  	width:150,
+  	backgroundColor:'transparent'
+  },
+  alignRight:{
+  	width: '100%',
+  	textAlign:'right',
+  },
+  inputRoot: {
+    color: 'inherit',
+    width: 180,
+  },
+  inputInput: {
+    paddingTop: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
+    paddingLeft: theme.spacing.unit,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: 320,
+    },
+  },
+  inputSelect:{
+  	
+  	'&:focus': {
+	      backgroundColor: 'transparent',
+	    },
+  },
+  container:{
+  	padding:20
+  },
+  toolbar:{
+  	marginBottom:40,
+  	marginRight:40,
+  },
+});
+
+
+
+const SearchBar = ({classes, handleChange, filters, searchType}) => {
+	//console.log( ` filters: ${filters}, searchType: ${searchType} `)
+	return (
+			<div className={classes.searchContainer}>
+				<div className={classes.searchIcon}>
+                	<SearchIcon color="secondary" />
+              	</div>
+	            <InputBase
+	                placeholder="cerca.."
+	                color="primary"
+	                name="search"
+	                type="search"
+	                onKeyUp={(event) => handleChange( event, "searchValue",)}
+	                classes={{
+	                  root: classes.inputRoot,
+	                  input: classes.inputInput,
+	                }}
+	              />
+            
+				<TextField 
+					select
+			        value={searchType}
+			        className={classes.textField}
+			        onChange={(event) => handleChange( event, "searchType",)}
+			        InputProps={{classes: {input: classes.inputSelect}, disableUnderline: true}}
+			        SelectProps={{
+			            MenuProps: {
+			              className: classes.menu,
+			            },
+			          }}
+			     >
+			        {filters.map(option => (
+			            <MenuItem key={option.value} value={option.value}>
+			              {option.label}
+			            </MenuItem>
+		          	))}
+			     </TextField>
+			</div>
+	)
+}
+
+export default withStyles(styles)(SearchBar);
