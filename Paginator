@@ -1,0 +1,62 @@
+import React from 'react';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import PropTypes from 'prop-types'; 
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid'; 
+
+
+const styles =  theme => ({
+	 paginator:{
+	  	position:'fixed',
+	  	bottom:5,
+	  	padding:0,
+	  	textAlign:'center'
+  },
+  currentPageLabel:{
+  	color: theme.palette.secondary.main,
+  	borderRadius:2,
+  	padding:7,
+  	paddingRight: 13,
+  	paddingLeft: 13,
+  	borderColor:theme.palette.secondary.main,
+  	border: '1px solid',
+  	marginRight:10,
+  	marginLeft: 10,
+  	fontSize: 14,
+  	display:'inline-block'
+  },
+  pagButton:{
+  	padding:0,
+  	minWidth:55
+  	}
+})
+
+const Paginator = ({classes, handleClick, currentIndex, }) => {
+	return(
+		<Grid  className={classes.paginator}>
+			<Button variant="outlined" color="secondary" size="small" aria-label="precedente" className={classes.pagButton} onClick={(e) => { handleClick(e, currentIndex-1)}} disabled={currentIndex === 1}>
+		        	<ArrowLeftIcon fontSize="large"  />
+		     </Button>
+		     <div className={classes.currentPageLabel}>
+		     		{currentIndex}
+		     </div>
+		     <Button variant="outlined" color="secondary" size="small" aria-label="successivo" className={classes.pagButton} onClick={(e) => { handleClick(e, currentIndex+1)}}>
+		        	<ArrowRightIcon fontSize="large" />
+		     </Button>
+		 </Grid>
+	)
+}
+
+Paginator.propTypes = {
+	classes: PropTypes.object.isRequired,
+	currentIndex: PropTypes.number.isRequired,
+	handleClick: PropTypes.func.isRequired,
+} 
+
+Paginator.defaultProps = {
+	currentIndex: 1,
+}
+
+export default withStyles(styles)(Paginator);
